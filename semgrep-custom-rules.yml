@@ -1,0 +1,32 @@
+rules:
+  - id: python.sqlite.execute-fstring-sql
+    languages: [python]
+    message: |
+      Possible SQL injection: executing an f-string (formatted SQL). Use parameterized queries,
+      e.g. cursor.execute("... WHERE userId = ?", (user_id,)).
+    severity: ERROR
+    metadata:
+      category: security
+      technology: [sqlite3]
+      cwe: ["CWE-89: SQL Injection"]
+    patterns:
+      - pattern-regex: "\\.execute\\(\\s*f[\"'].*\\{.*\\}.*[\"']\\s*\\)"
+    paths:
+      include:
+        - "*.py"
+        - "**/*.py"
+
+  - id: python.streamlit.unsafe-allow-html
+    languages: [python]
+    message: |
+      Streamlit HTML rendering enabled (unsafe_allow_html=True). Ensure content is trusted/sanitized
+      to avoid XSS or UI redress.
+    severity: WARNING
+    metadata:
+      category: security
+      technology: [streamlit]
+      cwe: ["CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"]
+    patterns:
+      - pattern-either:
+          - pattern: st.markdown(..., unsafe_allow_html=True, ...)
+          - pattern: st.write(..., unsafe_allow_html=True, ...)
